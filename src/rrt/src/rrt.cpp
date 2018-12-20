@@ -1,6 +1,20 @@
 #include <rrt/rrt.h>
 
-RRT_tree::RRT_tree(Node start_node,Node goal_node) : start(start_node),goal(goal_node)
+
+Node::Node(int x, int y)
+{
+    pos.x = x;
+    pos.y = y;
+
+    parent = NULL;
+}
+Node::Node()
+{
+
+}
+
+RRT_tree::RRT_tree(Node start_node,Node goal_node,int nodes_num,float build_ran)
+    : start(start_node),goal(goal_node),nodes_number(nodes_num),build_range(build_ran)
 {
 
 }
@@ -79,6 +93,7 @@ float RRT_tree::dist(geometry_msgs::Point p1, geometry_msgs::Point p2)
 }
 void RRT_tree::build()
 {
+    clear();
     for(int i = 0;i<nodes_number;i++)
     {
         geometry_msgs::Point rand_point = get_rand_point(0,100);

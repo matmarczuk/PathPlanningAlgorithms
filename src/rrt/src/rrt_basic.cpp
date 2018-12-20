@@ -7,26 +7,20 @@
 #include "sensor_msgs/PointCloud.h"
 #include <visualization_msgs/Marker.h>
 
-#define START_NUMBER 0
 #define RANGE 100
-#define NODES_NUMBER 3000
+#define NODES_NUMBER 1000
 #define EPSILON 5.0
-#define AIM
 
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "rrt_basic");
 
-    Node start;
-    start.pos.x = 0;
-    start.pos.y = 0;
-    start.parent = NULL;
+    Node start(0,0);
 
-    Node goal;
-    goal.pos.x = 100;
-    goal.pos.y = 100;
 
-    RRT_tree RRT(start,goal);
+    Node goal(100,100);
+
+    RRT_tree RRT(start,goal,NODES_NUMBER,EPSILON);
     RRT.init();
 
     ros::Rate loop_rate(0.25);

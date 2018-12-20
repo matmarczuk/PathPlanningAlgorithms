@@ -10,6 +10,9 @@ struct Node
    geometry_msgs::Point pos;
    Node *parent;
    int cost;
+
+   Node(int x, int y);
+   Node();
 };
 
 class RRT_tree
@@ -25,7 +28,7 @@ class RRT_tree
     visualization_msgs::Marker path_list;
 
 public:
-    RRT_tree(Node start_node,Node goal_node);
+    RRT_tree(Node start_node,Node goal_node,int nodes_num,float build_ran);
 
     void init();
     bool pts_equal(geometry_msgs::Point p1,geometry_msgs::Point p2);
