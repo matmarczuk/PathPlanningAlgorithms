@@ -17,6 +17,7 @@ struct Node
 
 class RRT_tree
 {
+protected:
     Node start;
     Node goal;
     int nodes_number;

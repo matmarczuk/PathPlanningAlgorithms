@@ -204,6 +204,10 @@ install(DIRECTORY include/${PROJECT_NAME}/
     PATTERN ".svn" EXCLUDE
 )
 
-add_executable(rrt_basic src/rrt_basic.cpp src/rrt.cpp)
+add_executable(rrt_basic src/rrt_basic_node.cpp src/rrt.cpp)
 target_link_libraries(rrt_basic ${catkin_LIBRARIES})
 add_dependencies(rrt_basic ${catkin_EXPORTED_TARGETS})
+
+add_executable(rrt_star src/rrt_star_node.cpp src/rrt_star.cpp src/rrt.cpp)
+target_link_libraries(rrt_star ${catkin_LIBRARIES})
+add_dependencies(rrt_star ${catkin_EXPORTED_TARGETS})
