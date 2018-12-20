@@ -16,8 +16,6 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "rrt_basic");
 
     Node start(0,0);
-
-
     Node goal(100,100);
 
     RRT_tree RRT(start,goal,NODES_NUMBER,EPSILON);

@@ -5,7 +5,7 @@ Node::Node(int x, int y)
 {
     pos.x = x;
     pos.y = y;
-
+    cost = 0;
     parent = NULL;
 }
 Node::Node()
@@ -100,21 +100,15 @@ void RRT_tree::build()
         Node new_node;
         Node *tmp;
 
-        tmp = &nodes_vec[0];
-
         //find the closest
-        for(int j = 0;j<nodes_vec.size();j++)
-        {
-            if(dist(nodes_vec[j].pos,rand_point) < dist(tmp->pos,rand_point))
-                tmp = &nodes_vec[j];
-        }
+        tmp = find_closest_node(rand_point);
 
         new_node.pos = step_from_to(tmp->pos,rand_point);
         new_node.parent = tmp;
 
-        if(new_node.pos.x>30 && new_node.pos.x<50 && new_node.pos.y>30 && new_node.pos.y<60)
+        if(!check_colision(new_node))
         {
-            i--;
+            i--; //have a one more try
             continue;
         }
 
@@ -157,6 +151,28 @@ void RRT_tree::clear()
     edge_list.points.clear();
     path_list.points.clear();
 
-    nodes_vec.clear();//poza 1 elementem
-    this->nodes_vec.push_back(start);
+    nodes_vec.clear();
+    this->nodes_vec.push_back(start);//leave start point
+}
+Node * RRT_tree::find_closest_node(geometry_msgs::Point rand_point)
+{
+    Node *tmp = &nodes_vec[0];
+
+    for(int j = 0;j<nodes_vec.size();j++)
+    {
+        if(dist(nodes_vec[j].pos,rand_point) < dist(tmp->pos,rand_point))
+            tmp = &nodes_vec[j];
+    }
+
+   return tmp;
+}
+bool RRT_tree::check_colision(Node new_node)
+{
+    //todo obstacle list and crossing
+    if(new_node.pos.x>30 && new_node.pos.x<50 && new_node.pos.y>30 && new_node.pos.y<60)
+    {
+        return false;
+    }
+
+    return true;
 }

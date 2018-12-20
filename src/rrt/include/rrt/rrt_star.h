@@ -10,6 +10,14 @@ class RRT_star_tree : public RRT_tree
 public:
     RRT_star_tree(Node start_node,Node goal_node,int nodes_num,float build_ran,float neigh_range);
     void show();
+    void rewire();
+
+    float calc_cost(Node parent_node,  geometry_msgs::Point rand_point);
+
+    void build();
+    Node * find_neighbor(geometry_msgs::Point rand_point);
+
+
 
 };
 

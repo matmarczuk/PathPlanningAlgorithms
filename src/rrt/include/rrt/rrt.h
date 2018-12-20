@@ -9,7 +9,7 @@ struct Node
 {
    geometry_msgs::Point pos;
    Node *parent;
-   int cost;
+   float cost;
 
    Node(int x, int y);
    Node();
@@ -37,6 +37,9 @@ public:
     geometry_msgs::Point get_rand_point(int down_num, int range);
     void draw_edge(geometry_msgs::Point pt1,geometry_msgs::Point pt2,visualization_msgs::Marker& marker);
     float dist(geometry_msgs::Point p1, geometry_msgs::Point p2);
+
+    Node* find_closest_node(geometry_msgs::Point rand_point);
+    bool check_colision(Node new_node);
 
     void build();
     void clear();
