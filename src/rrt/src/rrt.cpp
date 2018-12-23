@@ -1,5 +1,13 @@
 #include <rrt/rrt.h>
 
+Obstacle::Obstacle(Point corn1, Point corn2, Point corn3, Point corn4)
+{
+    this->pos_vec.push_back(corn1);
+    this->pos_vec.push_back(corn2);
+    this->pos_vec.push_back(corn3);
+    this->pos_vec.push_back(corn4);
+
+}
 
 Node::Node(int x, int y)
 {
@@ -8,13 +16,9 @@ Node::Node(int x, int y)
     cost = 0;
     parent = NULL;
 }
-Node::Node()
-{
 
-}
-
-RRT_tree::RRT_tree(Node start_node,Node goal_node,int nodes_num,float build_ran)
-    : start(start_node),goal(goal_node),nodes_number(nodes_num),build_range(build_ran)
+RRT_tree::RRT_tree(Node start_node,Node goal_node,std::vector<Obstacle> obst,int nodes_num,float build_ran)
+    : start(start_node),goal(goal_node),nodes_number(nodes_num),build_range(build_ran),obst_vec(obst)
 {
 
 }
@@ -47,14 +51,14 @@ void RRT_tree::init()
     path_list.id = 3;
 }
 
-bool RRT_tree::pts_equal(geometry_msgs::Point p1,geometry_msgs::Point p2)
+bool RRT_tree::pts_equal(Point p1,Point p2)
 {
     if(p1.x == p2.x && p1. y== p2.y)
         return true;
     else
         return false;
 }
-geometry_msgs::Point RRT_tree::step_from_to(geometry_msgs::Point p1, geometry_msgs::Point p2)
+Point RRT_tree::step_from_to(Point p1,Point p2)
 {
     if(dist(p1, p2) < build_range)
         return p2;
@@ -68,26 +72,26 @@ geometry_msgs::Point RRT_tree::step_from_to(geometry_msgs::Point p1, geometry_ms
     }
 
 }
-geometry_msgs::Point RRT_tree::get_rand_point(int down_num, int range)
+Point RRT_tree::get_rand_point(int down_num, int range)
 {
     geometry_msgs::Point random;
     random.x =( std::rand() % range ) + down_num;
     random.y =( std::rand() % range ) + down_num;
     return random;
 }
-void RRT_tree::draw_edge(geometry_msgs::Point pt1,geometry_msgs::Point pt2,visualization_msgs::Marker& marker)
+void RRT_tree::draw_edge(Node n1,Node n2,visualization_msgs::Marker& marker)
 {
-    geometry_msgs::Point point;
+    Point point;
 
-    point.x = pt1.x;
-    point.y = pt1.y;
+    point.x = n1.pos.x;
+    point.y = n1.pos.y;
     marker.points.push_back(point);
-    point.x = pt2.x;
-    point.y = pt2.y;
+    point.x = n2.pos.x;
+    point.y = n2.pos.y;
     marker.points.push_back(point);
 }
 
-float RRT_tree::dist(geometry_msgs::Point p1, geometry_msgs::Point p2)
+float RRT_tree::dist(Point p1, Point p2)
 {
     return sqrt((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y));
 }
@@ -96,7 +100,7 @@ void RRT_tree::build()
     clear();
     for(int i = 0;i<nodes_number;i++)
     {
-        geometry_msgs::Point rand_point = get_rand_point(0,100);
+        Point rand_point = get_rand_point(0,100);
         Node new_node;
         Node *tmp;
 
@@ -114,7 +118,7 @@ void RRT_tree::build()
 
         nodes_vec.push_back(new_node);
 
-        draw_edge(tmp->pos,new_node.pos,edge_list);
+        draw_edge(*tmp,new_node,edge_list);
         rrt_pub.publish(edge_list);
     }
 
@@ -141,7 +145,7 @@ void RRT_tree::find_path()
     Node *tmp = &goal;
     while(tmp->parent != NULL)
     {
-        draw_edge(tmp->pos,tmp->parent->pos,path_list);
+        draw_edge(*tmp,*(tmp->parent),path_list);
         rrt_pub.publish(path_list);
         tmp = tmp->parent;
     }
@@ -154,7 +158,7 @@ void RRT_tree::clear()
     nodes_vec.clear();
     this->nodes_vec.push_back(start);//leave start point
 }
-Node * RRT_tree::find_closest_node(geometry_msgs::Point rand_point)
+Node * RRT_tree::find_closest_node(Point rand_point)
 {
     Node *tmp = &nodes_vec[0];
 
@@ -168,11 +172,31 @@ Node * RRT_tree::find_closest_node(geometry_msgs::Point rand_point)
 }
 bool RRT_tree::check_colision(Node new_node)
 {
+    Edge branch;
+    branch.a = (new_node.pos.y - new_node.parent->pos.y)/(new_node.pos.x - new_node.parent->pos.x);
+    branch.b = new_node.pos.y - branch.a*new_node.pos.x;
+
     //todo obstacle list and crossing
-    if(new_node.pos.x>30 && new_node.pos.x<50 && new_node.pos.y>30 && new_node.pos.y<60)
+
+    for(int i = 0;i<obst_vec.size();i++)
     {
-        return false;
+        int above_count = 0;
+        int below_count = 0;
+
+        for(int j = 0;j<obst_vec[i].pos_vec.size();j++)
+        {
+            if((branch.a * obst_vec[i].pos_vec[j].x + branch.b)>= obst_vec[i].pos_vec[j].y)
+                below_count++;
+            else
+                above_count++;
+        }
+
+        if(below_count == 4 || above_count == 4)
+            continue;
+        else
+            return false;
     }
 
     return true;
+
 }

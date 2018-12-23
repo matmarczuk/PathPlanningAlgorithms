@@ -5,14 +5,29 @@
 #include <math.h>
 #include <ros/ros.h>
 
+typedef geometry_msgs::Point Point;
+
+struct Obstacle
+{
+    std::vector<Point> pos_vec;
+    Obstacle(Point corn1, Point corn2, Point corn3, Point corn4);
+    Obstacle(){}
+};
+struct Edge
+{
+    float a,b;
+
+};
+
 struct Node
 {
-   geometry_msgs::Point pos;
+   Point pos;
    Node *parent;
    float cost;
+   int inter_num;
 
    Node(int x, int y);
-   Node();
+   Node(){}
 };
 
 class RRT_tree
@@ -20,6 +35,9 @@ class RRT_tree
 protected:
     Node start;
     Node goal;
+
+    std::vector<Obstacle> obst_vec;
+
     int nodes_number;
     float build_range;
     ros::Publisher rrt_pub;
@@ -29,16 +47,16 @@ protected:
     visualization_msgs::Marker path_list;
 
 public:
-    RRT_tree(Node start_node,Node goal_node,int nodes_num,float build_ran);
+    RRT_tree(Node start_node,Node goal_node,std::vector<Obstacle> obst,int nodes_num,float build_ran);
 
     void init();
-    bool pts_equal(geometry_msgs::Point p1,geometry_msgs::Point p2);
-    geometry_msgs::Point step_from_to(geometry_msgs::Point p1, geometry_msgs::Point p2);
-    geometry_msgs::Point get_rand_point(int down_num, int range);
-    void draw_edge(geometry_msgs::Point pt1,geometry_msgs::Point pt2,visualization_msgs::Marker& marker);
-    float dist(geometry_msgs::Point p1, geometry_msgs::Point p2);
+    bool pts_equal(Point p1,Point p2);
+    Point step_from_to(Point p1, Point p2);
+    Point get_rand_point(int down_num, int range);
+    void draw_edge(Node n1,Node n2,visualization_msgs::Marker& marker);
+    float dist(Point p1, Point p2);
 
-    Node* find_closest_node(geometry_msgs::Point rand_point);
+    Node* find_closest_node(Point rand_point);
     bool check_colision(Node new_node);
 
     void build();

@@ -18,10 +18,20 @@ int main(int argc, char **argv)
     Node start(0,0);
     Node goal(100,100);
 
-    RRT_tree RRT(start,goal,NODES_NUMBER,EPSILON);
+    Point pt1;  pt1.x = 30; pt1.y = 30;
+    Point pt2;  pt2.x = 60; pt2.y = 30;
+    Point pt3;  pt3.x = 30; pt3.y = 60;
+    Point pt4;  pt4.x = 60; pt4.y = 60;
+
+    Obstacle obstacle1(pt1,pt2,pt3,pt4);
+
+    std::vector<Obstacle> obst_vec;
+    obst_vec.push_back(obstacle1);
+
+    RRT_tree RRT(start,goal,obst_vec,NODES_NUMBER,EPSILON);
     RRT.init();
 
-    ros::Rate loop_rate(0.25);
+    ros::Rate loop_rate(0.5);
 
     while(ros::ok())
     {

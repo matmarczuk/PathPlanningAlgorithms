@@ -7,7 +7,17 @@ int main(int argc, char **argv)
     ros::NodeHandle nh;
     ros::Rate loop_rate(0.25);
 
-    RRT_star_tree RRT_star(Node(0,0),Node(100,100),1000,5,10.0);
+    Point pt1;  pt1.x = 30; pt1.y = 40;
+    Point pt2;  pt2.x = 60; pt2.y = 40;
+    Point pt3;  pt3.x = 30; pt3.y = 70;
+    Point pt4;  pt4.x = 60; pt4.y = 70;
+
+    Obstacle obstacle1(pt1,pt2,pt3,pt4);
+
+    std::vector<Obstacle> obst_vec;
+    obst_vec.push_back(obstacle1);
+
+    RRT_star_tree RRT_star(Node(0,50),Node(100,50),obst_vec,3000,5.0,7.0);
     RRT_star.init();
 
     while(ros::ok())
