@@ -20,8 +20,8 @@ int main(int argc, char **argv)
 
     Point pt1;  pt1.x = 30; pt1.y = 30;
     Point pt2;  pt2.x = 60; pt2.y = 30;
-    Point pt3;  pt3.x = 30; pt3.y = 60;
-    Point pt4;  pt4.x = 60; pt4.y = 60;
+    Point pt3;  pt3.x = 60; pt3.y = 60;
+    Point pt4;  pt4.x = 30; pt4.y = 60;
 
     Obstacle obstacle1(pt1,pt2,pt3,pt4);
 
@@ -35,6 +35,7 @@ int main(int argc, char **argv)
 
     while(ros::ok())
     {
+        RRT.draw_obst();
         RRT.build();
         RRT.find_goal();
         RRT.find_path();

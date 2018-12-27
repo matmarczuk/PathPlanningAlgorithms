@@ -49,6 +49,17 @@ void RRT_tree::init()
     path_list.color.a = 1.0;
     path_list.color.r = 1.0;
     path_list.id = 3;
+
+    obst_list.header.frame_id = "my_frame";
+    obst_list.action = visualization_msgs::Marker::ADD;
+    obst_list.type = visualization_msgs::Marker::LINE_LIST;
+    obst_list.scale.x = 0.2;
+    obst_list.scale.y = 0.2;
+    obst_list.color.g = 0.0f;
+    obst_list.color.a = 1.0;
+    obst_list.color.r = 0.0;
+    obst_list.color.b = 1.0;
+    obst_list.id = 4;
 }
 
 bool RRT_tree::pts_equal(Point p1,Point p2)
@@ -198,5 +209,26 @@ bool RRT_tree::check_colision(Node new_node)
     }
 
     return true;
+
+}
+
+void RRT_tree::draw_obst()
+{
+    for(int i = 0;i<obst_vec.size();i++)
+    {
+        for(int j = 0;j<obst_vec[i].pos_vec.size();j++)
+        {
+            obst_list.points.push_back(obst_vec[i].pos_vec[j]);
+
+            if(j+1 == obst_vec[i].pos_vec.size()) //close the figure
+                obst_list.points.push_back(obst_vec[i].pos_vec[0]);
+            else
+                obst_list.points.push_back(obst_vec[i].pos_vec[j+1]);
+        }
+
+    }
+
+    rrt_pub.publish(obst_list);
+
 
 }

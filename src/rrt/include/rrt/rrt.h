@@ -45,6 +45,7 @@ protected:
     std::vector<Node> nodes_vec;
     visualization_msgs::Marker edge_list;
     visualization_msgs::Marker path_list;
+    visualization_msgs::Marker obst_list;
 
 public:
     RRT_tree(Node start_node,Node goal_node,std::vector<Obstacle> obst,int nodes_num,float build_ran);
@@ -55,6 +56,7 @@ public:
     Point get_rand_point(int down_num, int range);
     void draw_edge(Node n1,Node n2,visualization_msgs::Marker& marker);
     float dist(Point p1, Point p2);
+    void draw_obst();
 
     Node* find_closest_node(Point rand_point);
     bool check_colision(Node new_node);
